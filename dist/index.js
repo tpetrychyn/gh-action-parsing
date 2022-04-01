@@ -8480,11 +8480,40 @@ async function run() {
 
     const { context = {} } = github
 
-    await octokit.rest.issues.createComment({
-        ...context.repo,
-        issue_number: PR_NUMBER,
-        body: 'Thanks you entered ' + COMMENT_BODY
-    })
+    if (COMMENT_BODY.startsWith("deploy")) {
+        const parts = COMMENT_BODY.split(" ")
+        if (parts.length != 1) {
+            await octokit.rest.issues.createComment({
+                ...context.repo,
+                issue_number: PR_NUMBER,
+                body: 'Invalid deploy syntax, use "deploy {service-name}" e.g. "deploy activities-api"'
+            })
+
+            return
+        }
+
+        const service = parts[1]
+
+        await octokit.rest.issues.createComment({
+            ...context.repo,
+            issue_number: PR_NUMBER,
+            body: 'Deploying ${service} to production. Comment "finish deploy" to merge and close this PR, or "cancel deploy" to rollback to master and close this PR.'
+        })
+
+        core.setOutput("service", service)
+    } else if (COMMENT_BODY.equals("finish deploy")) {
+        await octokit.rest.issues.createComment({
+            ...context.repo,
+            issue_number: PR_NUMBER,
+            body: 'Deploy complete.'
+        })
+    } else if (COMMENT_BODY.equals("cancel deploy")) {
+        await octokit.rest.issues.createComment({
+            ...context.repo,
+            issue_number: PR_NUMBER,
+            body: 'Rolling back.'
+        })
+    }
 }
 
 run()
