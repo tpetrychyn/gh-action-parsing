@@ -1,9 +1,9 @@
 name: Test
 
 on:
-  pull_request:
-    types: [opened, reopened]
-
+  issue_comment:
+    types: [created, edited]
+  
 jobs:
   test:
     runs-on: ubuntu-latest
@@ -12,3 +12,4 @@ jobs:
       - uses: ./
         with:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+          COMMENT_BODY: ${{ github.event.comment.body }}
