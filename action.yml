@@ -1,0 +1,13 @@
+
+name: 'Parse PR comment'
+description: Parse pr comment, then pass on result
+author: Taylor Petrychyn
+
+inputs:
+  GITHUB_TOKEN:
+    description: 'Github token'
+    required: true
+
+runs:
+  using: 'node12'
+  main: dist/index.js
