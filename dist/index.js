@@ -8482,7 +8482,7 @@ async function run() {
 
     if (COMMENT_BODY.startsWith("deploy")) {
         const parts = COMMENT_BODY.split(" ")
-        if (parts.length != 1) {
+        if (parts.length != 2) {
             await octokit.rest.issues.createComment({
                 ...context.repo,
                 issue_number: PR_NUMBER,
